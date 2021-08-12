@@ -12,5 +12,9 @@ function Decode(fPort,bytes) {
     	data.humidity = bytes[2];
   	return { data: data };
   }
-  else {return {data:9999}; }  
+  else {
+         data.humidity = 99.9;
+         data.temp     = 99.9;
+         return {data: data}; 
+       } 
 };
