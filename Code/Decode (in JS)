@@ -1,0 +1,16 @@
+function Decode(fPort,bytes) {
+  if (fPort == 11)
+    {
+    var data = {};
+     // temperature
+        var myT = 0
+        var hi = bytes[0];
+        var lo = bytes[1];
+        myT = hi << 8;
+        data.temp = (myT | lo)/100;
+    // humidity
+    	data.humidity = bytes[2];
+  	return { data: data };
+  }
+  else {return {data:9999}; }  
+};
