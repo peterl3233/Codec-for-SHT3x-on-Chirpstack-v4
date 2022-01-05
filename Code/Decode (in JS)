@@ -1,6 +1,6 @@
 function Decode(fPort,bytes) {
   var data = {};
-    //  Port        
+    //  Port ... I happen to use 11 for temperature and pressure        
         var p   = fPort;
 
   if(p == 11){
@@ -8,13 +8,14 @@ function Decode(fPort,bytes) {
         var myT = 0;
         var hi = bytes[0];
         var lo = bytes[1];
-        var hi2 = 255-hi;
-          if(hi > 236 ){  // it works to about -50C
-             myT = hi2 << 8;          
-             data.temp = -1*(myT | lo)/100;}
-           else{
-             myT = hi << 8;
-             data.temp = (myT | lo)/100;}
+        
+        myT = hi;
+        myT = myT<<8;
+        myT = myT | lo;
+    
+        data.temp = myT/100;
+        if (data.temp > 50 || data.temp < -50) data.temp = NaN
+    
      // humidity      
      	data.humidity = bytes[2];
   	return { data: data };
