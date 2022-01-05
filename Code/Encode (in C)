@@ -2,8 +2,12 @@
 
 uint8_t * getSensors()
 {   /* gets the SHT3x sensor values and returns an array pointer (m) of 3 bytes. 
-       b1 and b2 are temperature*100 and b3 is humidity, all signed binary
+       b1 and b2 are temperature*100 and b3 is humidity, all signed binary.
+       Basically the sensor temperature value is multiplied by 100 and then 
+       saved as a 16 bit 2s compliment number.  The two 8 bit parts are sent 
+       as unsigned integers.   
     */
+    
     float t,h;
     static uint8_t m[3];
     int16_t b;
@@ -19,7 +23,7 @@ uint8_t * getSensors()
       h=99.9;
     }
     
-    // convert to 3 char array
+    // convert to 3 byte array
     b = (int16_t)(t*100);
     m[0] = (uint8_t)(b>>8);
     m[1] = (uint8_t)(b);
