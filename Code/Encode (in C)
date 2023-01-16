@@ -1,33 +1,41 @@
 // uses the "Sensirion/arduino-sht @ ^1.2.0     ; temperature Humidity sensor using SHT30
 
 uint8_t * getSensors()
-{   /* gets the SHT3x sensor values and returns an array pointer (m) of 3 bytes. 
-       b1 and b2 are temperature*100 and b3 is humidity, all signed binary.
-       Basically the sensor temperature value is multiplied by 100 and then 
-       saved as a 16 bit 2s compliment number.  The two 8 bit parts are sent 
-       as unsigned integers.   
-    */
-    
+    {   
+     /* gets the SHT3x sensor values and returns an array pointer (m) of 3 bytes. 
+       b1 and b2 are temperature*100 and b3 is humidity, 
+       all ints are unsigned binary
+     */
+    uint8_t count = 0;
+    boolean sensgood = false;
     float t,h;
     static uint8_t m[3];
-    int16_t b;
+    uint16_t b;
     
-    // Sensor Data;
+    // Sensor Data ... 3 tries;
+    while (!sensgood && count++ <3){
     if (sht.readSample())
     {
       t = sht.getTemperature();
       h = sht.getHumidity();
+      sensgood = true;
     }
-    else {
-      t=99.9;
-      h=99.9;
     }
+
+    // get a 16 bit value
+    b = (uint16_t)((t+100)*100);
     
-    // convert to 3 byte array
-    b = (int16_t)(t*100);
+    // convert to 3 char array
+    if (sensgood) {
     m[0] = (uint8_t)(b>>8);
     m[1] = (uint8_t)(b);
     m[2] = (uint8_t)h;
-
+    Serial.println(m[2]);
+    } else {
+        m[0] = 0xff;
+        m[1] = 0xff;
+        m[2] = 0xff;
+    }
+  
     return m;
 }
