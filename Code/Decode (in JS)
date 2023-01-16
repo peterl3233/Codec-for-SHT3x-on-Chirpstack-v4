@@ -1,23 +1,34 @@
-function Decode(fPort,bytes) {
+function decodeUplink(input){
+  // Works on Chirpstack v4
   var data = {};
-    //  Port ... I happen to use 11 for temperature and pressure        
-        var p   = fPort;
+  bytes = input.bytes;
+  var myT = 0;
+  var hi  = bytes[0];
+  var lo  = bytes[1]; 
+  
+  if (input.fPort == 11){
+    // Temperature
+    myT = hi;
+    myT = myT<<8;
+    myT = myT | lo;
+    data.temp1 = (myT/100)-100;
+    
+    // humidity 
+    data.humidity1 = bytes[2];
+    return {data:data};
+	}   // port 11
 
-  if(p == 11){
-     //  Temperature 
-        var myT = 0;
-        var hi = bytes[0];
-        var lo = bytes[1];
-        
-        myT = hi;
-        myT = myT<<8;
-        myT = myT | lo;
+  if (input.fPort == 12){
+    // Temperature
+    myT = hi;
+    myT = myT<<8;
+    myT = myT | lo;
+    data.temp2 = (myT/100)-100;
     
-        data.temp = myT/100;
-        if (data.temp > 50 || data.temp < -50) data.temp = NaN
-    
-     // humidity      
-     	data.humidity = bytes[2];
-  	return { data: data };
-  }
+    // humidity 
+    data.humidity2 = bytes[2];
+    return {data:data};
+	} // port 12
+
 }
+
